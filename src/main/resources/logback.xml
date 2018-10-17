@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="10 seconds" debug="false">
+
+	<!-- Example for logging into the build folder of your project -->
+	<property name="LOG_FILE" value="/tmp/metrics"/>​
+
+	<!-- Appender to log to file -->​
+	<appender name="metricsAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_FILE}.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.gz</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level %msg%n</pattern>
+			<charset>utf8</charset>
+		</encoder>
+	</appender>
+	
+	<appender name="lqTcpSocketAppender" class="com.apm70.fileq.client.monitor.TcpSocketAppender">
+        <encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level %msg%n</pattern>
+			<charset>utf8</charset>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter"><!-- 只打印错误日志 -->
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+	
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level %msg%n</pattern>
+			<charset>utf8</charset>
+		</encoder>
+		<target>System.out</target>
+	</appender>
+	
+	<appender name="flatfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>/tmp/LQ.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>/tmp/LQ.%d{yyyy-MM-dd}.gz</fileNamePattern>
+			<maxHistory>7</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level %msg%n</pattern>
+			<charset>utf8</charset>
+		</encoder>
+	</appender>
+	
+	<!-- 自定义日志 --> 
+	<logger name="metrics" level="INFO">
+	    <appender-ref ref="metricsAppender" />
+	</logger>
+    
+	<root level="INFO">
+		<appender-ref ref="flatfile" />
+		<appender-ref ref="console" />
+		<appender-ref ref="lqTcpSocketAppender" />
+	</root>
+</configuration>
